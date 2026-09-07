@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🎨 Anime Sketch Generator</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        /* Reset y estilos básicos */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0e0b14;
+            color: #f0eef5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem;
+        }
+        .app-header {
+            width: 100%;
+            max-width: 1400px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 1.5rem;
+            background: rgba(30, 25, 45, 0.8);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+        .app-header h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f472b6, #a78bfa, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .app-header h1 i {
+            -webkit-text-fill-color: initial;
+            color: #f472b6;
+        }
+        .header-actions .badge {
+            background: rgba(167, 139, 250, 0.2);
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            color: #c4b5fd;
+        }
+        .app-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1.2rem;
+            width: 100%;
+            max-width: 1400px;
+            flex: 1;
+        }
+        @media (max-width: 1100px) {
+            .app-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .app-grid .panel-styles {
+                grid-column: span 2;
+            }
+        }
+        @media (max-width: 700px) {
+            .app-grid {
+                grid-template-columns: 1fr;
+            }
+            .app-grid .panel-styles {
+                grid-column: span 1;
+            }
+        }
+        .panel {
+            background: rgba(24, 20, 38, 0.85);
+            backdrop-filter: blur(8px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            min-height: 460px;
+        }
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .panel-header h2 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #d4d0e6;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .panel-header h2 i {
+            color: #a78bfa;
+        }
+        .btn {
+            background: rgba(167, 139, 250, 0.15);
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            color: #e0dbf5;
+            padding: 0.4rem 0.9rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.25s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-family: inherit;
+        }
+        .btn:hover {
+            background: rgba(167, 139, 250, 0.3);
+            border-color: #a78bfa;
+            transform: translateY(-1px);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
+            border-color: #7c3aed;
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #059669, #047857);
+            border-color: #059669;
+            color: #fff;
+        }
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.35);
+        }
+        .btn-sm {
+            padding: 0.25rem 0.6rem;
+            font-size: 0.7rem;
+            border-radius: 8px;
+        }
+        .canvas-wrap {
+            flex: 1;
+            position: relative;
+            background: rgba(12, 10, 20, 0.6);
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            min-height: 240px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .canvas-wrap canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: contain;
+            background: #12101a;
+            cursor: crosshair;
+        }
+        .canvas-wrap .placeholder {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.15);
+            font-size: 0.9rem;
+            pointer-events: none;
+            text-align: center;
+            user-select: none;
+        }
+        .canvas-wrap .placeholder i {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 0.5rem;
+            color: rgba(167, 139, 250, 0.2);
+        }
+        .tools-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.7rem;
+            padding: 0.5rem 0.8rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 14px;
+            align-items: center;
+        }
+        .tools-row .group {
+            display: flex;
+            gap: 0.3rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .tools-row .group-label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.3);
+            margin-right: 0.2rem;
+        }
+        .tools-row input[type="color"] {
+            width: 30px;
+            height: 30px;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            padding: 2px;
+            background: transparent;
+            cursor: pointer;
+        }
+        .tools-row input[type="range"] {
+            width: 70px;
+            accent-color: #a78bfa;
+            background: transparent;
+        }
+        .tools-row .size-label {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.5);
+            min-width: 24px;
+            text-align: center;
+        }
+        .tools-row .btn.active-tool {
+            background: rgba(167, 139, 250, 0.35);
+            border-color: #a78bfa;
+            box-shadow: 0 0 20px rgba(167, 139, 250, 0.15);
+        }
+        .styles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 0.7rem;
+            flex: 1;
+            align-content: start;
+        }
+        .style-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 2px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 0.7rem 0.5rem 0.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s;
+            position: relative;
+        }
+        .style-card:hover {
+            background: rgba(167, 139, 250, 0.08);
+            border-color: rgba(167, 139, 250, 0.3);
+        }
+        .style-card.active {
+            border-color: #a78bfa;
+            background: rgba(167, 139, 250, 0.12);
+        }
+        .style-card .preview {
+            width: 100%;
+            aspect-ratio: 1/1;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            margin-bottom: 0.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            position: relative;
+        }
+        .style-card .name {
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: #c4bdf0;
+        }
+        .style-card .check {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: #7c3aed;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.55rem;
+            color: #fff;
+        }
+        .style-card.active .check {
+            display: flex;
+        }
+        .upload-zone {
+            border: 2px dashed rgba(167, 139, 250, 0.2);
+            border-radius: 14px;
+            padding: 0.6rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 0.7rem;
+            background: rgba(167, 139, 250, 0.03);
+        }
+        .upload-zone:hover {
+            border-color: rgba(167, 139, 250, 0.4);
+        }
+        .upload-zone i {
+            font-size: 1.4rem;
+            display: block;
+            margin-bottom: 0.2rem;
+            color: rgba(167, 139, 250, 0.4);
+        }
+        .upload-zone input {
+            display: none;
+        }
+        .preview-status {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+            text-align: center;
+            padding: 0.3rem;
+            margin-top: 0.4rem;
+            min-height: 1.8rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .preview-status .highlight {
+            color: #a78bfa;
+            font-weight: 500;
+        }
+        .footer {
+            width: 100%;
+            max-width: 1400px;
+            margin-top: 1.2rem;
+            padding: 0.6rem 1.5rem;
+            text-align: center;
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.12);
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+        }
+        .debug-msg {
+            background: rgba(167, 139, 250, 0.15);
+            border-radius: 10px;
+            padding: 0.2rem 0.8rem;
+            font-size: 0.7rem;
+            color: #c4b5fd;
+        }
+        @media (max-width: 500px) {
+            .tools-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .tools-row .group {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="app-header">
+        <h1><i class="fas fa-wand-magic-sparkles"></i> Anime Sketch</h1>
+        <div class="header-actions">
+            <span class="badge"><i class="fas fa-paintbrush"></i> Dibujo en tiempo real</span>
+            <span class="badge"><i class="fas fa-image"></i> Sube tu boceto</span>
+        </div>
+    </header>
+
+    <!-- GRID -->
+    <div class="app-grid">
+
+        <!-- PANEL 1: SKETCH -->
+        <section class="panel panel-sketch">
+            <div class="panel-header">
+                <h2><i class="fas fa-pencil"></i> Boceto</h2>
+                <div class="actions">
+                    <button class="btn btn-sm btn-danger" id="clearSketch"><i class="fas fa-eraser"></i> Limpiar</button>
+                    <button class="btn btn-sm btn-success" id="downloadSketch"><i class="fas fa-download"></i> Guardar</button>
+                </div>
+            </div>
+            <div class="upload-zone" id="uploadZone">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <span>Arrastra o haz clic para subir imagen</span>
+                <input type="file" id="fileInput" accept="image/*" />
+            </div>
+            <div class="canvas-wrap">
+                <canvas id="sketchCanvas"></canvas>
+                <div class="placeholder" id="sketchPlaceholder">
+                    <i class="fas fa-pen-fancy"></i>
+                    Dibuja aquí o sube una imagen
+                </div>
+            </div>
+            <div class="tools-row">
+                <div class="group">
+                    <span class="group-label">Herramienta</span>
+                    <button class="btn btn-sm active-tool" data-tool="pen" id="toolPen"><i class="fas fa-pen"></i></button>
+                    <button class="btn btn-sm" data-tool="eraser" id="toolEraser"><i class="fas fa-eraser"></i></button>
+                </div>
+                <div class="group">
+                    <span class="group-label">Color</span>
+                    <input type="color" id="drawColor" value="#f472b6" />
+                </div>
+                <div class="group">
+                    <span class="group-label">Tamaño</span>
+                    <input type="range" id="brushSize" min="1" max="40" value="6" />
+                    <span class="size-label" id="sizeLabel">6</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- PANEL 2: PREVIEW -->
+        <section class="panel panel-preview">
+            <div class="panel-header">
+                <h2><i class="fas fa-mask"></i> Vista Anime <span style="font-weight:400;font-size:0.7rem;color:rgba(255,255,255,0.25);">en tiempo real</span></h2>
+                <div class="actions">
+                    <button class="btn btn-sm btn-primary" id="generateBtn"><i class="fas fa-wand-magic-sparkles"></i> Generar</button>
+                </div>
+            </div>
+            <div class="canvas-wrap">
+                <canvas id="previewCanvas"></canvas>
+                <div class="placeholder" id="previewPlaceholder">
+                    <i class="fas fa-image"></i>
+                    Dibuja o sube un boceto
+                </div>
+            </div>
+            <div class="preview-status" id="previewStatus">
+                <span>💡 Dibuja para ver el efecto</span>
+            </div>
+        </section>
+
+        <!-- PANEL 3: STYLES -->
+        <section class="panel panel-styles">
+            <div class="panel-header">
+                <h2><i class="fas fa-palette"></i> Estilos Artísticos</h2>
+                <div class="actions">
+                    <span style="font-size:0.6rem;color:rgba(255,255,255,0.2);">Haz clic para aplicar</span>
+                </div>
+            </div>
+            <div class="styles-grid" id="stylesGrid"></div>
+            <div style="margin-top:0.6rem;display:flex;gap:0.5rem;align-items:center;padding-top:0.5rem;border-top:1px solid rgba(255,255,255,0.04);">
+                <span style="font-size:0.65rem;color:rgba(255,255,255,0.2);"><i class="fas fa-sliders-h"></i> Intensidad</span>
+                <input type="range" id="styleIntensity" min="0.2" max="1.8" step="0.05" value="1.0" style="flex:1;min-width:80px;accent-color:#a78bfa;" />
+                <span style="font-size:0.65rem;color:rgba(255,255,255,0.3);min-width:30px;" id="intensityLabel">1.0</span>
+            </div>
+        </section>
+    </div>
+
+    <div class="footer">
+        Anime Sketch Generator · Hecho con <i class="fas fa-heart" style="color:#f472b6;font-size:0.6rem;"></i> para GitHub Pages
+    </div>
+
+    <script>
+        // ============================================================
+        //  CÓDIGO PRINCIPAL — Todo envuelto en un IIFE para evitar conflictos
+        // ============================================================
+        (function() {
+            'use strict';
+
+            console.log('🚀 Iniciando Anime Sketch Generator...');
+
+            // ---------- OBTENER REFERENCIAS ----------
+            const sketchCanvas = document.getElementById('sketchCanvas');
+            const previewCanvas = document.getElementById('previewCanvas');
+            const ctxSketch = sketchCanvas.getContext('2d');
+            const ctxPreview = previewCanvas.getContext('2d');
+
+            const fileInput = document.getElementById('fileInput');
+            const uploadZone = document.getElementById('uploadZone');
+            const clearBtn = document.getElementById('clearSketch');
+            const downloadBtn = document.getElementById('downloadSketch');
+            const generateBtn = document.getElementById('generateBtn');
+
+            const toolPen = document.getElementById('toolPen');
+            const toolEraser = document.getElementById('toolEraser');
+            const drawColor = document.getElementById('drawColor');
+            const brushSize = document.getElementById('brushSize');
+            const sizeLabel = document.getElementById('sizeLabel');
+
+            const stylesGrid = document.getElementById('stylesGrid');
+            const styleIntensity = document.getElementById('styleIntensity');
+            const intensityLabel = document.getElementById('intensityLabel');
+
+            const sketchPlaceholder = document.getElementById('sketchPlaceholder');
+            const previewPlaceholder = document.getElementById('previewPlaceholder');
+            const previewStatus = document.getElementById('previewStatus');
+
+            // ---------- CONSTANTES ----------
+            const CANVAS_W = 512;
+            const CANVAS_H = 512;
+
+            // ---------- ESTADOS ----------
+            let isDrawing = false;
+            let lastX = 0,
+                lastY = 0;
+            let currentTool = 'pen';
+            let currentColor = '#f472b6';
+            let currentSize = 6;
+            let selectedStyle = 'anime';
+            let intensity = 1.0;
+            let hasImage = false;
+            let previewTimeout = null;
+
+            // ---------- ESTILOS ----------
+            const STYLES = [
+                { id: 'anime', name: 'Anime Clásico', icon: '🎨' },
+                { id: 'ghibli', name: 'Studio Ghibli', icon: '🍃' },
+                { id: 'shonen', name: 'Shonen', icon: '⚡' },
+                { id: 'shojo', name: 'Shojo', icon: '🌸' },
+                { id: 'cyberpunk', name: 'Cyberpunk', icon: '🌆' },
+                { id: 'watercolor', name: 'Acuarela', icon: '🎨' },
+                { id: 'manga', name: 'Manga B&W', icon: '📖' },
+                { id: 'vintage', name: 'Retro Anime', icon: '📺' },
+            ];
+
+            // ---------- FUNCIONES DE CANVAS ----------
+            function resizeCanvases() {
+                [sketchCanvas, previewCanvas].forEach((canvas, idx) => {
+                    const rect = canvas.parentElement.getBoundingClientRect();
+                    const w = Math.min(rect.width - 4, CANVAS_W);
+                    const h = Math.min(rect.height - 4, CANVAS_H);
+                    const ratio = Math.min(w / CANVAS_W, h / CANVAS_H);
+                    const displayW = CANVAS_W * ratio;
+                    const displayH = CANVAS_H * ratio;
+                    canvas.style.width = displayW + 'px';
+                    canvas.style.height = displayH + 'px';
+
+                    if (idx === 0) {
+                        // Sketch
+                        if (canvas.width !== CANVAS_W || canvas.height !== CANVAS_H) {
+                            canvas.width = CANVAS_W;
+                            canvas.height = CANVAS_H;
+                            clearSketchInternal();
+                        }
+                    } else {
+                        // Preview
+                        if (canvas.width !== CANVAS_W || canvas.height !== CANVAS_H) {
+  
