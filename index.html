@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🎨 Generador Boceto → Anime</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0b0e1a;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .app-container {
+            max-width: 1100px;
+            width: 100%;
+            background: #131b2e;
+            border-radius: 32px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            border: 1px solid #2a3a5e;
+        }
+        h1 {
+            font-size: 28px;
+            color: #f0c4a8;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        h1 small {
+            font-size: 14px;
+            font-weight: normal;
+            color: #7a8ba8;
+            margin-left: auto;
+        }
+        .grid-windows {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 20px;
+        }
+        .window-card {
+            background: #1a253b;
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid #2d4060;
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+        .window-card:hover {
+            border-color: #5a7cb0;
+        }
+        .window-card.full-width {
+            grid-column: span 2;
+        }
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #b7cdff;
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid #2d4060;
+            padding-bottom: 10px;
+        }
+        .card-title span {
+            background: #2d4060;
+            padding: 2px 10px;
+            border-radius: 30px;
+            font-size: 12px;
+            color: #aac3ff;
+        }
+        .upload-zone {
+            border: 2px dashed #4a6a8f;
+            border-radius: 16px;
+            padding: 30px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            background: #0f172a;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+        }
+        .upload-zone:hover {
+            border-color: #f0c4a8;
+            background: #19233e;
+        }
+        .upload-zone img {
+            max-width: 100%;
+            max-height: 250px;
+            border-radius: 12px;
+            margin-top: 10px;
+        }
+        .upload-zone p {
+            color: #7a8ba8;
+            font-size: 15px;
+        }
+        .upload-zone .icon-big {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        label {
+            color: #b0c7e8;
+            font-size: 14px;
+            font-weight: 500;
+            margin-top: 12px;
+            display: block;
+        }
+        input,
+        textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid #2d4060;
+            background: #0f172a;
+            color: #ffffff;
+            font-size: 15px;
+            transition: 0.2s;
+            margin-top: 4px;
+            font-family: inherit;
+        }
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #f0c4a8;
+            box-shadow: 0 0 0 3px rgba(240, 196, 168, 0.15);
+        }
+        textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+        .slider-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 6px;
+        }
+        .slider-group div {
+            flex: 1;
+        }
+        input[type="range"] {
+            width: 100%;
+            padding: 0;
+            background: transparent;
+            border: none;
+            accent-color: #f0c4a8;
+        }
+        input[type="range"]:focus {
+            box-shadow: none;
+        }
+        .range-values {
+            display: flex;
+            justify-content: space-between;
+            color: #7a8ba8;
+            font-size: 12px;
+        }
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 18px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.25s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex: 1;
+        }
+        .btn-primary {
+            background: #f0c4a8;
+            color: #131b2e;
+        }
+        .btn-primary:hover {
+            transform: scale(1.02);
+            background: #ffdac2;
+            box-shadow: 0 8px 25px rgba(240, 196, 168, 0.3);
+        }
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-secondary {
+            background: #2d4060;
+            color: #fff;
+        }
+        .btn-secondary:hover {
+            background: #3d5a7a;
+        }
+        .btn-danger {
+            background: #5c2e3a;
+            color: #ffb3b3;
+        }
+        .btn-danger:hover {
+            background: #7a3d4d;
+        }
+        #resultado {
+            width: 100%;
+            border-radius: 16px;
+            display: none;
+            border: 2px solid #3d5a7a;
+            margin-top: 6px;
+        }
+        .result-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        .loader {
+            border: 4px solid #2d4060;
+            border-top: 4px solid #f0c4a8;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            animation: spin 1s linear infinite;
+            margin: 30px auto;
+            display: none;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .status-text {
+            color: #aac3ff;
+            text-align: center;
+            padding: 10px;
+            display: none;
+            font-size: 14px;
+        }
+        .download-btn {
+            background: #2d5a3a;
+            color: #b0ffc8;
+            border: none;
+            border-radius: 30px;
+            padding: 10px 20px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 12px;
+            display: none;
+            align-self: center;
+        }
+        .download-btn:hover {
+            background: #3d7a4a;
+        }
+        @media (max-width: 760px) {
+            .grid-windows {
+                grid-template-columns: 1fr;
+            }
+            .window-card.full-width {
+                grid-column: span 1;
+            }
+            .slider-group {
+                flex-direction: column;
+                gap: 6px;
+            }
+            .btn-group {
+                flex-direction: column;
+            }
+            .app-container {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <h1>
+            🎨 Boceto → Anime
+            <small>⚡ ControlNet v1.1</small>
+        </h1>
+        <div class="grid-windows">
+            <div class="window-card">
+                <div class="card-title">📤 Sube tu Boceto <span>Paso 1</span></div>
+                <div class="upload-zone" id="dropArea">
+                    <div class="icon-big">🖍️</div>
+                    <p><strong>Haz clic o arrastra</strong><br />JPG, PNG o WEBP</p>
+                    <input type="file" id="fileInput" accept="image/*" style="display: none;" />
+                    <img id="preview" alt="Vista previa" />
+                </div>
+                <button class="btn btn-danger" id="clearImageBtn" style="margin-top:12px;">🗑️ Quitar imagen</button>
+            </div>
+            <div class="window-card">
+                <div class="card-title">⚙️ Configuración <span>Paso 2</span></div>
+                <label>🔑 Token de Hugging Face (obtenlo gratis <a href="https://huggingface.co/settings/tokens" target="_blank" style="color:#f0c4a8;">aquí</a>)</label>
+                <input type="password" id="hfToken" placeholder="hf_xxxxxxxxxxxxxxxxxxxx" />
+                <label>✨ Prompt (describe tu anime)</label>
+                <textarea id="promptInput">1girl, anime style, masterpiece, best quality, vibrant colors, detailed eyes, flowing hair, school uniform, cherry blossoms</textarea>
+                <label>❌ Prompt Negativo (evita errores)</label>
+                <textarea id="negativePrompt">lowres, bad anatomy, bad hands, cropped, worst quality, deformed, ugly, extra limbs</textarea>
+                <div class="slider-group">
+                    <div>
+                        <label>🔢 Pasos (Calidad)</label>
+                        <input type="range" id="stepsSlider" min="10" max="40" value="25" />
+                        <div class="range-values"><span>10</span><span id="stepsValue">25</span><span>40</span></div>
+                    </div>
+                    <div>
+                        <label>🎯 Escala CFG (Creatividad)</label>
+                        <input type="range" id="cfgSlider" min="5" max="12" value="7.5" step="0.5" />
+                        <div class="range-values"><span>5</span><span id="cfgValue">7.5</span><span>12</span></div>
+                    </div>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-primary" id="generateBtn">✨ Generar Imagen</button>
+                    <button class="btn btn-secondary" id="resetBtn">🔄 Reiniciar todo</button>
+                </div>
+            </div>
+            <div class="window-card full-width">
+                <div class="card-title">🖼️ Resultado <span>Paso 3</span></div>
+                <div class="result-wrapper">
+                    <div class="loader" id="loader"></div>
+                    <div class="status-text" id="statusText">⏳ Procesando tu boceto... (15-30 segundos)</div>
+                    <img id="resultado" alt="Imagen generada" />
+                    <button class="download-btn" id="downloadBtn">⬇️ Descargar Imagen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // ============================================================
+        //  CÓDIGO CON PROXY CORS PARA EVITAR BLOQUEOS
+        // ============================================================
+        const dropArea = document.getElementById('dropArea');
+        const fileInput = document.getElementById('fileInput');
+        const preview = document.getElementById('preview');
+        const clearImageBtn = document.getElementById('clearImageBtn');
+        const resultado = document.getElementById('resultado');
+        const loader = document.getElementById('loader');
+        const statusText = document.getElementById('statusText');
+        const generateBtn = document.getElementById('generateBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const tokenInput = document.getElementById('hfToken');
+        const promptInput = document.getElementById('promptInput');
+        const negativePrompt = document.getElementById('negativePrompt');
+        const stepsSlider = document.getElementById('stepsSlider');
+        const cfgSlider = document.getElementById('cfgSlider');
+        const stepsValue = document.getElementById('stepsValue');
+        const cfgValue = document.getElementById('cfgValue');
+        let uploadedImageBase64 = null;
+
+        stepsSlider.addEventListener('input', () => { stepsValue.textContent = stepsSlider.value; });
+        cfgSlider.addEventListener('input', () => { cfgValue.textContent = cfgSlider.value; });
+
+        dropArea.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files[0]) handleFile(e.target.files[0]);
+        });
+        dropArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropArea.style.borderColor = '#f0c4a8';
+        });
+        dropArea.addEventListener('dragleave', () => {
+            dropArea.style.borderColor = '#4a6a8f';
+        });
+        dropArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropArea.style.borderColor = '#4a6a8f';
+            if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+        });
+
+        function handleFile(file) {
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+                uploadedImageBase64 = e.target.result.split(',')[1];
+                dropArea.querySelector('p').style.display = 'none';
+                dropArea.querySelector('.icon-big').style.display = 'none';
+                dropArea.style.borderColor = '#4caf50';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        clearImageBtn.addEventListener('click', () => {
+            preview.src = '';
+            preview.style.display = 'none';
+            uploadedImageBase64 = null;
+            dropArea.querySelector('p').style.display = 'block';
+            dropArea.querySelector('.icon-big').style.display = 'block';
+            dropArea.style.borderColor = '#4a6a8f';
+            fileInput.value = '';
+            resultado.style.display = 'none';
+            downloadBtn.style.display = 'none';
+        });
+
+        generateBtn.addEventListener('click', async () => {
+            const token = tokenInput.value.trim();
+            if (!token) { alert('⚠️ Introduce tu token de Hugging Face.'); return; }
+            if (!uploadedImageBase64) { alert('⚠️ Sube un boceto primero.'); return; }
+
+            const prompt = promptInput.value || 'anime style, high quality';
+            const negative = negativePrompt.value || 'lowres, bad anatomy';
+            const steps = parseInt(stepsSlider.value) || 25;
+            const cfg = parseFloat(cfgSlider.value) || 7.5;
+
+            generateBtn.disabled = true;
+            loader.style.display = 'block';
+            statusText.style.display = 'block';
+            resultado.style.display = 'none';
+            downloadBtn.style.display = 'none';
+
+            try {
+                // === AQUÍ ESTÁ EL PROXY CORS ===
+                const proxyUrl = 'https://corsproxy.io/?';
+                const targetUrl = 'https://api-inference.huggingface.co/models/lllyasviel/control_v11p_sd15_scribble';
+                const fullUrl = proxyUrl + encodeURIComponent(targetUrl);
+
+                const response = await fetch(fullUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        inputs: uploadedImageBase64,
+                        parameters: {
+                            prompt: prompt,
+                            negative_prompt: negative,
+                            num_inference_steps: steps,
+                            guidance_scale: cfg,
+                        }
+                    })
+                });
+
+                if (!response.ok) {
+                    let errorMsg = `Error ${response.status}`;
+                    try {
+                        const errData = await response.json();
+                        errorMsg = errData.error || errorMsg;
+                    } catch (e) {}
+                    throw new Error(errorMsg);
+                }
+
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
+                resultado.src = url;
+                resultado.style.display = 'block';
+                downloadBtn.style.display = 'flex';
+
+            } catch (error) {
+                alert(`❌ Error: ${error.message}. Verifica token o intenta más tarde.`);
+                console.error(error);
+            } finally {
+                generateBtn.disabled = false;
+                loader.style.display = 'none';
+                statusText.style.display = 'none';
+            }
+        });
+
+        downloadBtn.addEventListener('click', () => {
+            if (!resultado.src) return;
+            const a = document.createElement('a');
+            a.href = resultado.src;
+            a.download = `anime_${Date.now()}.png`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        });
+
+        resetBtn.addEventListener('click', () => {
+            clearImageBtn.click();
+            tokenInput.value = '';
+            promptInput.value = '1girl, anime style, masterpiece, best quality, vibrant colors, detailed eyes, flowing hair, school uniform, cherry blossoms';
+            negativePrompt.value = 'lowres, bad anatomy, bad hands, cropped, worst quality, deformed, ugly, extra limbs';
+            stepsSlider.value = 25;
+            stepsValue.textContent = '25';
+            cfgSlider.value = 7.5;
+            cfgValue.textContent = '7.5';
+            resultado.src = '';
+            resultado.style.display = 'none';
+            downloadBtn.style.display = 'none';
+            loader.style.display = 'none';
+            statusText.style.display = 'none';
+            generateBtn.disabled = false;
+        });
+    </script>
+</body>
+</html>
