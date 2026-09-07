@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>🎨 Anime Sketch Generator</title>
-    <!-- Font Awesome -->
+    <title>🎨 Anime Sketch (versión estable)</title>
+    <!-- FontAwesome para iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <style>
-        /* Reset y estilos básicos */
+        /* ===== ESTILOS BÁSICOS ===== */
         * {
             margin: 0;
             padding: 0;
@@ -25,50 +25,39 @@
         }
         .app-header {
             width: 100%;
-            max-width: 1400px;
+            max-width: 1200px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 0.8rem 1.5rem;
             background: rgba(30, 25, 45, 0.8);
-            backdrop-filter: blur(12px);
             border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
             margin-bottom: 1.5rem;
             flex-wrap: wrap;
             gap: 0.8rem;
         }
         .app-header h1 {
             font-size: 1.6rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #f472b6, #a78bfa, #60a5fa);
+            background: linear-gradient(135deg, #f472b6, #a78bfa);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
         }
-        .app-header h1 i {
-            -webkit-text-fill-color: initial;
-            color: #f472b6;
-        }
-        .header-actions .badge {
-            background: rgba(167, 139, 250, 0.2);
-            padding: 0.3rem 1rem;
+        .status-badge {
+            background: #059669;
+            color: #fff;
+            padding: 0.2rem 0.8rem;
             border-radius: 30px;
-            font-size: 0.75rem;
-            border: 1px solid rgba(167, 139, 250, 0.2);
-            color: #c4b5fd;
+            font-size: 0.7rem;
         }
         .app-grid {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             gap: 1.2rem;
             width: 100%;
-            max-width: 1400px;
+            max-width: 1200px;
             flex: 1;
         }
-        @media (max-width: 1100px) {
+        @media (max-width: 900px) {
             .app-grid {
                 grid-template-columns: 1fr 1fr;
             }
@@ -76,7 +65,7 @@
                 grid-column: span 2;
             }
         }
-        @media (max-width: 700px) {
+        @media (max-width: 600px) {
             .app-grid {
                 grid-template-columns: 1fr;
             }
@@ -86,13 +75,12 @@
         }
         .panel {
             background: rgba(24, 20, 38, 0.85);
-            backdrop-filter: blur(8px);
             border-radius: 20px;
             border: 1px solid rgba(255, 255, 255, 0.06);
             padding: 1.2rem;
             display: flex;
             flex-direction: column;
-            min-height: 460px;
+            min-height: 400px;
         }
         .panel-header {
             display: flex;
@@ -120,9 +108,8 @@
             padding: 0.4rem 0.9rem;
             border-radius: 12px;
             font-size: 0.75rem;
-            font-weight: 500;
             cursor: pointer;
-            transition: all 0.25s;
+            transition: all 0.2s;
             display: inline-flex;
             align-items: center;
             gap: 0.4rem;
@@ -131,19 +118,10 @@
         .btn:hover {
             background: rgba(167, 139, 250, 0.3);
             border-color: #a78bfa;
-            transform: translateY(-1px);
         }
         .btn-primary {
             background: linear-gradient(135deg, #7c3aed, #6d28d9);
             border-color: #7c3aed;
-            color: #fff;
-        }
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-        }
-        .btn-success {
-            background: linear-gradient(135deg, #059669, #047857);
-            border-color: #059669;
             color: #fff;
         }
         .btn-danger {
@@ -151,8 +129,10 @@
             border-color: rgba(239, 68, 68, 0.3);
             color: #fca5a5;
         }
-        .btn-danger:hover {
-            background: rgba(239, 68, 68, 0.35);
+        .btn-success {
+            background: linear-gradient(135deg, #059669, #047857);
+            border-color: #059669;
+            color: #fff;
         }
         .btn-sm {
             padding: 0.25rem 0.6rem;
@@ -166,7 +146,7 @@
             border-radius: 14px;
             overflow: hidden;
             border: 1px solid rgba(255, 255, 255, 0.05);
-            min-height: 240px;
+            min-height: 200px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -227,7 +207,6 @@
         .tools-row input[type="range"] {
             width: 70px;
             accent-color: #a78bfa;
-            background: transparent;
         }
         .tools-row .size-label {
             font-size: 0.7rem;
@@ -238,11 +217,10 @@
         .tools-row .btn.active-tool {
             background: rgba(167, 139, 250, 0.35);
             border-color: #a78bfa;
-            box-shadow: 0 0 20px rgba(167, 139, 250, 0.15);
         }
         .styles-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
             gap: 0.7rem;
             flex: 1;
             align-content: start;
@@ -251,10 +229,10 @@
             background: rgba(255, 255, 255, 0.04);
             border: 2px solid rgba(255, 255, 255, 0.06);
             border-radius: 14px;
-            padding: 0.7rem 0.5rem 0.5rem;
+            padding: 0.5rem;
             text-align: center;
             cursor: pointer;
-            transition: all 0.25s;
+            transition: all 0.2s;
             position: relative;
         }
         .style-card:hover {
@@ -270,16 +248,14 @@
             aspect-ratio: 1/1;
             border-radius: 10px;
             background: rgba(0, 0, 0, 0.3);
-            margin-bottom: 0.4rem;
+            margin-bottom: 0.3rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.8rem;
-            position: relative;
+            font-size: 1.6rem;
         }
         .style-card .name {
-            font-size: 0.7rem;
-            font-weight: 500;
+            font-size: 0.65rem;
             color: #c4bdf0;
         }
         .style-card .check {
@@ -302,20 +278,20 @@
         .upload-zone {
             border: 2px dashed rgba(167, 139, 250, 0.2);
             border-radius: 14px;
-            padding: 0.6rem;
+            padding: 0.5rem;
             text-align: center;
             color: rgba(255, 255, 255, 0.3);
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             cursor: pointer;
-            transition: all 0.3s;
             margin-bottom: 0.7rem;
             background: rgba(167, 139, 250, 0.03);
+            transition: border 0.3s;
         }
         .upload-zone:hover {
             border-color: rgba(167, 139, 250, 0.4);
         }
         .upload-zone i {
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             display: block;
             margin-bottom: 0.2rem;
             color: rgba(167, 139, 250, 0.4);
@@ -337,26 +313,51 @@
             justify-content: center;
             gap: 0.5rem;
         }
-        .preview-status .highlight {
-            color: #a78bfa;
-            font-weight: 500;
-        }
         .footer {
             width: 100%;
-            max-width: 1400px;
+            max-width: 1200px;
             margin-top: 1.2rem;
-            padding: 0.6rem 1.5rem;
+            padding: 0.6rem;
             text-align: center;
             font-size: 0.65rem;
             color: rgba(255, 255, 255, 0.12);
             border-top: 1px solid rgba(255, 255, 255, 0.03);
         }
-        .debug-msg {
-            background: rgba(167, 139, 250, 0.15);
-            border-radius: 10px;
-            padding: 0.2rem 0.8rem;
+        .js-status {
+            padding: 0.2rem 1rem;
+            border-radius: 30px;
             font-size: 0.7rem;
-            color: #c4b5fd;
+            font-weight: 600;
+        }
+        .js-status.ok {
+            background: #059669;
+            color: #fff;
+        }
+        .js-status.fail {
+            background: #dc2626;
+            color: #fff;
+        }
+        .intensity-row {
+            margin-top: 0.6rem;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            padding-top: 0.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .intensity-row input[type="range"] {
+            flex: 1;
+            min-width: 60px;
+            accent-color: #a78bfa;
+        }
+        .intensity-row label {
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.2);
+        }
+        .intensity-row span {
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.3);
+            min-width: 30px;
         }
         @media (max-width: 500px) {
             .tools-row {
@@ -371,16 +372,15 @@
 </head>
 <body>
 
-    <!-- HEADER -->
+    <!-- HEADER con mensaje de estado JS -->
     <header class="app-header">
         <h1><i class="fas fa-wand-magic-sparkles"></i> Anime Sketch</h1>
-        <div class="header-actions">
-            <span class="badge"><i class="fas fa-paintbrush"></i> Dibujo en tiempo real</span>
-            <span class="badge"><i class="fas fa-image"></i> Sube tu boceto</span>
+        <div>
+            <span class="js-status" id="jsStatus">⏳ Cargando...</span>
         </div>
     </header>
 
-    <!-- GRID -->
+    <!-- GRID PRINCIPAL -->
     <div class="app-grid">
 
         <!-- PANEL 1: SKETCH -->
@@ -425,7 +425,7 @@
         <!-- PANEL 2: PREVIEW -->
         <section class="panel panel-preview">
             <div class="panel-header">
-                <h2><i class="fas fa-mask"></i> Vista Anime <span style="font-weight:400;font-size:0.7rem;color:rgba(255,255,255,0.25);">en tiempo real</span></h2>
+                <h2><i class="fas fa-mask"></i> Vista Anime</h2>
                 <div class="actions">
                     <button class="btn btn-sm btn-primary" id="generateBtn"><i class="fas fa-wand-magic-sparkles"></i> Generar</button>
                 </div>
@@ -438,114 +438,128 @@
                 </div>
             </div>
             <div class="preview-status" id="previewStatus">
-                <span>💡 Dibuja para ver el efecto</span>
+                💡 Dibuja para ver el efecto
             </div>
         </section>
 
-        <!-- PANEL 3: STYLES -->
+        <!-- PANEL 3: ESTILOS -->
         <section class="panel panel-styles">
             <div class="panel-header">
-                <h2><i class="fas fa-palette"></i> Estilos Artísticos</h2>
-                <div class="actions">
-                    <span style="font-size:0.6rem;color:rgba(255,255,255,0.2);">Haz clic para aplicar</span>
-                </div>
+                <h2><i class="fas fa-palette"></i> Estilos</h2>
+                <span style="font-size:0.6rem;color:rgba(255,255,255,0.2);">Haz clic para aplicar</span>
             </div>
             <div class="styles-grid" id="stylesGrid"></div>
-            <div style="margin-top:0.6rem;display:flex;gap:0.5rem;align-items:center;padding-top:0.5rem;border-top:1px solid rgba(255,255,255,0.04);">
-                <span style="font-size:0.65rem;color:rgba(255,255,255,0.2);"><i class="fas fa-sliders-h"></i> Intensidad</span>
-                <input type="range" id="styleIntensity" min="0.2" max="1.8" step="0.05" value="1.0" style="flex:1;min-width:80px;accent-color:#a78bfa;" />
-                <span style="font-size:0.65rem;color:rgba(255,255,255,0.3);min-width:30px;" id="intensityLabel">1.0</span>
+            <div class="intensity-row">
+                <label><i class="fas fa-sliders-h"></i> Intensidad</label>
+                <input type="range" id="styleIntensity" min="0.2" max="1.8" step="0.05" value="1.0" />
+                <span id="intensityLabel">1.0</span>
             </div>
         </section>
     </div>
 
     <div class="footer">
-        Anime Sketch Generator · Hecho con <i class="fas fa-heart" style="color:#f472b6;font-size:0.6rem;"></i> para GitHub Pages
+        Anime Sketch Generator · Hecho con <i class="fas fa-heart" style="color:#f472b6;"></i> para GitHub Pages
     </div>
 
+    <!-- ============================================================
+    JAVASCRIPT — Todo aquí, sin dependencias externas (solo FontAwesome)
+    ============================================================ -->
     <script>
         // ============================================================
-        //  CÓDIGO PRINCIPAL — Todo envuelto en un IIFE para evitar conflictos
+        // 1. MENSAJE DE CARGA INICIAL
         // ============================================================
-        (function() {
-            'use strict';
+        document.getElementById('jsStatus').textContent = '✅ JS cargado';
+        document.getElementById('jsStatus').className = 'js-status ok';
+        console.log('🚀 JavaScript cargado correctamente.');
 
-            console.log('🚀 Iniciando Anime Sketch Generator...');
+        // ============================================================
+        // 2. REFERENCIAS A ELEMENTOS
+        // ============================================================
+        const sketchCanvas = document.getElementById('sketchCanvas');
+        const previewCanvas = document.getElementById('previewCanvas');
+        const ctxSketch = sketchCanvas.getContext('2d');
+        const ctxPreview = previewCanvas.getContext('2d');
 
-            // ---------- OBTENER REFERENCIAS ----------
-            const sketchCanvas = document.getElementById('sketchCanvas');
-            const previewCanvas = document.getElementById('previewCanvas');
-            const ctxSketch = sketchCanvas.getContext('2d');
-            const ctxPreview = previewCanvas.getContext('2d');
+        const fileInput = document.getElementById('fileInput');
+        const uploadZone = document.getElementById('uploadZone');
+        const clearBtn = document.getElementById('clearSketch');
+        const downloadBtn = document.getElementById('downloadSketch');
+        const generateBtn = document.getElementById('generateBtn');
+        const toolPen = document.getElementById('toolPen');
+        const toolEraser = document.getElementById('toolEraser');
+        const drawColor = document.getElementById('drawColor');
+        const brushSize = document.getElementById('brushSize');
+        const sizeLabel = document.getElementById('sizeLabel');
+        const stylesGrid = document.getElementById('stylesGrid');
+        const styleIntensity = document.getElementById('styleIntensity');
+        const intensityLabel = document.getElementById('intensityLabel');
+        const sketchPlaceholder = document.getElementById('sketchPlaceholder');
+        const previewPlaceholder = document.getElementById('previewPlaceholder');
+        const previewStatus = document.getElementById('previewStatus');
 
-            const fileInput = document.getElementById('fileInput');
-            const uploadZone = document.getElementById('uploadZone');
-            const clearBtn = document.getElementById('clearSketch');
-            const downloadBtn = document.getElementById('downloadSketch');
-            const generateBtn = document.getElementById('generateBtn');
+        // ============================================================
+        // 3. CONSTANTES Y ESTADOS
+        // ============================================================
+        const W = 512,
+            H = 512;
+        let isDrawing = false;
+        let lastX = 0,
+            lastY = 0;
+        let currentTool = 'pen';
+        let currentColor = '#f472b6';
+        let currentSize = 6;
+        let selectedStyle = 'anime';
+        let intensity = 1.0;
+        let hasImage = false;
+        let previewTimeout = null;
 
-            const toolPen = document.getElementById('toolPen');
-            const toolEraser = document.getElementById('toolEraser');
-            const drawColor = document.getElementById('drawColor');
-            const brushSize = document.getElementById('brushSize');
-            const sizeLabel = document.getElementById('sizeLabel');
+        const STYLES = [
+            { id: 'anime', name: 'Anime', icon: '🎨' },
+            { id: 'ghibli', name: 'Ghibli', icon: '🍃' },
+            { id: 'shonen', name: 'Shonen', icon: '⚡' },
+            { id: 'shojo', name: 'Shojo', icon: '🌸' },
+            { id: 'cyberpunk', name: 'Cyberpunk', icon: '🌆' },
+            { id: 'watercolor', name: 'Acuarela', icon: '🎨' },
+            { id: 'manga', name: 'Manga B&W', icon: '📖' },
+            { id: 'vintage', name: 'Retro', icon: '📺' },
+        ];
 
-            const stylesGrid = document.getElementById('stylesGrid');
-            const styleIntensity = document.getElementById('styleIntensity');
-            const intensityLabel = document.getElementById('intensityLabel');
+        // ============================================================
+        // 4. FUNCIONES DE CANVAS
+        // ============================================================
+        function resizeCanvases() {
+            [sketchCanvas, previewCanvas].forEach((canvas, idx) => {
+                const rect = canvas.parentElement.getBoundingClientRect();
+                const w = Math.min(rect.width - 4, W);
+                const h = Math.min(rect.height - 4, H);
+                const ratio = Math.min(w / W, h / H);
+                canvas.style.width = (W * ratio) + 'px';
+                canvas.style.height = (H * ratio) + 'px';
+                if (idx === 0) {
+                    if (canvas.width !== W || canvas.height !== H) {
+                        canvas.width = W;
+                        canvas.height = H;
+                        clearSketchInternal();
+                    }
+                } else {
+                    if (canvas.width !== W || canvas.height !== H) {
+                        canvas.width = W;
+                        canvas.height = H;
+                        ctxPreview.fillStyle = '#12101a';
+                        ctxPreview.fillRect(0, 0, W, H);
+                        previewPlaceholder.style.display = 'flex';
+                    }
+                }
+            });
+        }
 
-            const sketchPlaceholder = document.getElementById('sketchPlaceholder');
-            const previewPlaceholder = document.getElementById('previewPlaceholder');
-            const previewStatus = document.getElementById('previewStatus');
-
-            // ---------- CONSTANTES ----------
-            const CANVAS_W = 512;
-            const CANVAS_H = 512;
-
-            // ---------- ESTADOS ----------
-            let isDrawing = false;
-            let lastX = 0,
-                lastY = 0;
-            let currentTool = 'pen';
-            let currentColor = '#f472b6';
-            let currentSize = 6;
-            let selectedStyle = 'anime';
-            let intensity = 1.0;
-            let hasImage = false;
-            let previewTimeout = null;
-
-            // ---------- ESTILOS ----------
-            const STYLES = [
-                { id: 'anime', name: 'Anime Clásico', icon: '🎨' },
-                { id: 'ghibli', name: 'Studio Ghibli', icon: '🍃' },
-                { id: 'shonen', name: 'Shonen', icon: '⚡' },
-                { id: 'shojo', name: 'Shojo', icon: '🌸' },
-                { id: 'cyberpunk', name: 'Cyberpunk', icon: '🌆' },
-                { id: 'watercolor', name: 'Acuarela', icon: '🎨' },
-                { id: 'manga', name: 'Manga B&W', icon: '📖' },
-                { id: 'vintage', name: 'Retro Anime', icon: '📺' },
-            ];
-
-            // ---------- FUNCIONES DE CANVAS ----------
-            function resizeCanvases() {
-                [sketchCanvas, previewCanvas].forEach((canvas, idx) => {
-                    const rect = canvas.parentElement.getBoundingClientRect();
-                    const w = Math.min(rect.width - 4, CANVAS_W);
-                    const h = Math.min(rect.height - 4, CANVAS_H);
-                    const ratio = Math.min(w / CANVAS_W, h / CANVAS_H);
-                    const displayW = CANVAS_W * ratio;
-                    const displayH = CANVAS_H * ratio;
-                    canvas.style.width = displayW + 'px';
-                    canvas.style.height = displayH + 'px';
-
-                    if (idx === 0) {
-                        // Sketch
-                        if (canvas.width !== CANVAS_W || canvas.height !== CANVAS_H) {
-                            canvas.width = CANVAS_W;
-                            canvas.height = CANVAS_H;
-                            clearSketchInternal();
-                        }
-                    } else {
-                        // Preview
-                        if (canvas.width !== CANVAS_W || canvas.height !== CANVAS_H) {
-  
+        function clearSketchInternal() {
+            ctxSketch.fillStyle = '#ffffff';
+            ctxSketch.fillRect(0, 0, W, H);
+            ctxSketch.strokeStyle = 'rgba(0,0,0,0.04)';
+            ctxSketch.lineWidth = 0.5;
+            for (let i = 0; i <= W; i += 32) {
+                ctxSketch.beginPath();
+                ctxSketch.moveTo(i, 0);
+                ctxSketch.lineTo(i, H);
+                ctxSketch.st
