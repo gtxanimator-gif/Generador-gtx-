@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anime Sketch Studio</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#0b0d13;
+    color:#f4f4f7;
+    height:100vh;
+    overflow:hidden;
+}
+
+/* HEADER */
+
+header{
+    height:65px;
+    background:#11141c;
+    border-bottom:1px solid #292d38;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 22px;
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.logo-icon{
+    width:38px;
+    height:38px;
+    border-radius:11px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(135deg,#b77cff,#7049e8);
+    font-size:20px;
+}
+
+.logo h1{
+    font-size:16px;
+}
+
+.logo span{
+    display:block;
+    color:#858b9b;
+    font-size:11px;
+    margin-top:3px;
+}
+
+.header-buttons{
+    display:flex;
+    gap:8px;
+}
+
+.header-btn{
+    background:#191d26;
+    color:white;
+    border:1px solid #303541;
+    padding:8px 13px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+/* LAYOUT */
+
+.app{
+    height:calc(100vh - 65px);
+    display:grid;
+    grid-template-columns:280px 1fr 260px;
+}
+
+/* SIDEBARS */
+
+.sidebar{
+    background:#11141b;
+    border-right:1px solid #292d38;
+    padding:18px;
+    overflow-y:auto;
+}
+
+.rightbar{
+    background:#11141b;
+    border-left:1px solid #292d38;
+    padding:18px;
+    overflow-y:auto;
+}
+
+.section-title{
+    font-size:13px;
+    margin-bottom:14px;
+}
+
+/* UPLOAD */
+
+.upload{
+    height:140px;
+    border:1px dashed #4a5060;
+    border-radius:12px;
+    background:#0d1016;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    text-align:center;
+    margin-bottom:18px;
+}
+
+.upload:hover{
+    border-color:#a77aff;
+}
+
+.upload-icon{
+    font-size:30px;
+    color:#b78cff;
+    margin-bottom:7px;
+}
+
+.upload small{
+    color:#858b9b;
+    margin-top:5px;
+}
+
+input[type=file]{
+    display:none;
+}
+
+/* CONTROLS */
+
+.control{
+    margin-bottom:18px;
+}
+
+.control label{
+    display:block;
+    font-size:12px;
+    color:#bfc3ce;
+    margin-bottom:7px;
+}
+
+textarea{
+    width:100%;
+    min-height:100px;
+    resize:vertical;
+    border-radius:9px;
+    border:1px solid #303541;
+    background:#0c0f15;
+    color:white;
+    padding:10px;
+    outline:none;
+}
+
+textarea:focus{
+    border-color:#8d67db;
+}
+
+.range-line{
+    display:flex;
+    justify-content:space-between;
+    color:#aeb3c0;
+    font-size:11px;
+}
+
+input[type=range]{
+    width:100%;
+    accent-color:#a77aff;
+    margin-top:8px;
+}
+
+/* BUTTONS */
+
+.generate{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:linear-gradient(135deg,#b67cff,#744be7);
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.generate:hover{
+    filter:brightness(1.1);
+}
+
+.clear{
+    width:100%;
+    margin-top:8px;
+    padding:10px;
+    border-radius:9px;
+    background:#191d26;
+    color:white;
+    border:1px solid #303541;
+    cursor:pointer;
+}
+
+/* WORKSPACE */
+
+.workspace{
+    min-width:0;
+    background:#0c0f15;
+    display:flex;
+    flex-direction:column;
+}
+
+/* TABS */
+
+.tabs{
+    height:52px;
+    border-bottom:1px solid #292d38;
+    display:flex;
+    padding-left:15px;
+}
+
+.tab{
+    padding:0 18px;
+    border:none;
+    background:none;
+    color:#7f8594;
+    cursor:pointer;
+    border-bottom:2px solid transparent;
+}
+
+.tab.active{
+    color:white;
+    border-bottom-color:#a77aff;
+}
+
+/* PANELS */
+
+.panel{
+    display:none;
+    flex:1;
+    min-height:0;
+    padding:16px;
+}
+
+.panel.active{
+    display:flex;
+    flex-direction:column;
+}
+
+/* TOOLBAR */
+
+.toolbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+}
+
+.tools{
+    display:flex;
+    gap:6px;
+}
+
+.tool{
+    background:#181c24;
+    color:#bfc3ce;
+    border:1px solid #303541;
+    padding:7px 11px;
+    border-radius:7px;
+    cursor:pointer;
+}
+
+.tool.active{
+    background:#2a2040;
+    border-color:#7957ae;
+    color:#e9dcff;
+}
+
+/* CANVAS */
+
+.canvas-container{
+    flex:1;
+    min-height:0;
+    border-radius:13px;
+    overflow:hidden;
+    background:#e8e8eb;
+    border:1px solid #303541;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+canvas{
+    width:100%;
+    height:100%;
+    touch-action:none;
+}
+
+/* LIVE */
+
+.live{
+    height:35px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    color:#858b9b;
+    font-size:11px;
+}
+
+.live-dot{
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:#6de1ae;
+    box-shadow:0 0 10px #6de1ae;
+}
+
+/* RESULT */
+
+.result{
+    flex:1;
+    border:1px solid #292d38;
+    border-radius:13px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#080a0f;
+    overflow:hidden;
+}
+
+.result img{
+    max-width:100%;
+    max-height:100%;
+    object-fit:contain;
+}
+
+.placeholder{
+    text-align:center;
+    color:#777e8d;
+}
+
+.placeholder-icon{
+    font-size:50px;
+    color:#a77aff;
+}
+
+.placeholder h2{
+    color:#d9dbe2;
+    font-size:17px;
+    margin:8px;
+}
+
+/* STYLES */
+
+.styles-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
+    gap:14px;
+    overflow:auto;
+}
+
+.style{
+    background:#131720;
+    border:1px solid #292e3a;
+    border-radius:12px;
+    overflow:hidden;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.style:hover{
+    transform:translateY(-2px);
+    border-color:#7655a9;
+}
+
+.style.selected{
+    border-color:#b47fff;
+    box-shadow:0 0 0 1px #b47fff;
+}
+
+.style-image{
+    height:125px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:45px;
+}
+
+.style-info{
+    padding:10px;
+}
+
+.style-info strong{
+    display:block;
+    font-size:13px;
+}
+
+.style-info small{
+    display:block;
+    color:#7f8594;
+    margin-top:5px;
+}
+
+/* STYLE PREVIEWS */
+
+.modern{
+    background:linear-gradient(135deg,#7651ad,#e2a3cb);
+}
+
+.cel{
+    background:linear-gradient(135deg,#19375e,#3d91c3);
+}
+
+.manga{
+    background:linear-gradient(135deg,#25262a,#d8d8d8);
+}
+
+.water{
+    background:linear-gradient(135deg,#9fcfd4,#e4b8c8);
+}
+
+.fantasy{
+    background:linear-gradient(135deg,#26123e,#a761d0);
+}
+
+.retro{
+    background:linear-gradient(135deg,#bd7654,#4b3941);
+}
+
+/* RIGHT PANEL */
+
+.selected-style{
+    background:#0c0f15;
+    border:1px solid #292e3a;
+    border-radius:10px;
+    overflow:hidden;
+    margin-bottom:20px;
+}
+
+.selected-preview{
+    height:130px;
+}
+
+.selected-info{
+    padding:10px;
+}
+
+.selected-info strong{
+    display:block;
+}
+
+.selected-info small{
+    color:#858b9b;
+}
+
+.options-title{
+    font-size:12px;
+    margin-bottom:8px;
+}
+
+.option{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px 0;
+    border-bottom:1px solid #252a34;
+    font-size:12px;
+    color:#c8ccd5;
+}
+
+.switch{
+    width:34px;
+    height:18px;
+    background:#303641;
+    border-radius:20px;
+    position:relative;
+}
+
+.switch:after{
+    content:"";
+    position:absolute;
+    width:14px;
+    height:14px;
+    background:#999;
+    border-radius:50%;
+    top:2px;
+    left:2px;
+}
+
+input[type=checkbox]{
+    display:none;
+}
+
+input[type=checkbox]:checked + .switch{
+    background:#704ca7;
+}
+
+input[type=checkbox]:checked + .switch:after{
+    left:18px;
+    background:white;
+}
+
+/* FOOTER */
+
+footer{
+    position:fixed;
+    bottom:5px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:9px;
+    color:#555b68;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:1100px){
+
+    .app{
+        grid-template-columns:250px 1fr;
+    }
+
+    .rightbar{
+        display:none;
+    }
+
+}
+
+@media(max-width:700px){
+
+    body{
+        overflow:auto;
+    }
+
+    .app{
+        height:auto;
+        display:block;
+    }
+
+    .sidebar{
+        border-right:none;
+        border-bottom:1px solid #292d38;
+    }
+
+    .workspace{
+        min-height:650px;
+    }
+
+    footer{
+        display:none;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">
+    <div class="logo-icon">✦</div>
+    <div>
+        <h1>Anime Sketch Studio</h1>
+        <span>Sketch → Anime</span>
+    </div>
+</div>
+
+<div class="header-buttons">
+    <button class="header-btn">☼</button>
+    <button class="header-btn">GitHub ↗</button>
+</div>
+
+</header>
+
+
+<div class="app">
+
+
+<!-- LEFT SIDEBAR -->
+
+<aside class="sidebar">
+
+<h2 class="section-title">Proyecto</h2>
+
+<label class="upload">
+
+<input type="file" id="imageInput" accept="image/png,image/jpeg,image/webp">
+
+<div class="upload-icon">↑</div>
+
+<strong>Sube tu boceto</strong>
+
+<small>PNG, JPG o WebP</small>
+
+</label>
+
+
+<div class="control">
+
+<label>Dirección artística</label>
+
+<textarea id="prompt"
+placeholder="Ej.: chica guerrera, armadura elegante, iluminación cinematográfica..."></textarea>
+
+</div>
+
+
+<div class="control">
+
+<div class="range-line">
+<span>Fidelidad al boceto</span>
+<span id="strengthValue">75%</span>
+</div>
+
+<input
+type="range"
+id="strength"
+min="0"
+max="100"
+value="75">
+
+</div>
+
+
+<div class="control">
+
+<div class="range-line">
+<span>Detalle</span>
+<span id="detailValue">80%</span>
+</div>
+
+<input
+type="range"
+id="detail"
+min="0"
+max="100"
+value="80">
+
+</div>
+
+
+<button class="generate" id="generate">
+✦ Convertir a anime
+</button>
+
+<button class="clear" id="clear">
+Limpiar lienzo
+</button>
+
+</aside>
+
+
+
+<!-- CENTER -->
+
+<main class="workspace">
+
+<div class="tabs">
+
+<button class="tab active" data-panel="draw">
+✎ Dibujar
+</button>
+
+<button class="tab" data-panel="result">
+✦ Resultado
+</button>
+
+<button class="tab" data-panel="styles">
+◇ Estilos
+</button>
+
+</div>
+
+
+<!-- DRAW -->
+
+<section class="panel active" id="draw">
+
+<div class="toolbar">
+
+<div class="tools">
+
+<button class="tool active" id="brush">
+Pincel
+</button>
+
+<button class="tool" id="eraser">
+Borrador
+</button>
+
+</div>
+
+<div>
+
+<label style="font-size:11px;color:#858b9b">
+Grosor
+</label>
+
+<input
+type="range"
+id="brushSize"
+min="1"
+max="40"
+value="5">
+
+</div>
+
+</div>
+
+
+<div class="canvas-container">
+
+<canvas id="canvas"></canvas>
+
+</div>
+
+
+<div class="live">
+
+<span class="live-dot"></span>
+
+<strong>Vista previa en vivo</strong>
+
+<span id="liveText">
+esperando trazos...
+</span>
+
+</div>
+
+</section>
+
+
+
+<!-- RESULT -->
+
+<section class="panel" id="result">
+
+<div class="result">
+
+<div class="placeholder" id="placeholder">
+
+<div class="placeholder-icon">
+✦
+</div>
+
+<h2>Tu ilustración aparecerá aquí</h2>
+
+<p>
+Selecciona un estilo y pulsa "Convertir a anime".
+</p>
+
+</div>
+
+<img id="resultImage" hidden>
+
+</div>
+
+</section>
+
+
+
+<!-- STYLES -->
+
+<section class="panel" id="styles">
+
+<div style="margin-bottom:18px">
+
+<h2>Estilos artísticos</h2>
+
+<p style="color:#858b9b;font-size:12px;margin-top:5px">
+Elige una dirección visual para tu ilustración.
+</p>
+
+</div>
+
+
+<div class="styles-grid" id="stylesGrid">
+
+</div>
+
+</section>
+
+</main>
+
+
+
+<!-- RIGHT SIDEBAR -->
+
+<aside class="rightbar">
+
+<h2 class="section-title">
+Estilo seleccionado
+</h2>
+
+
+<div class="selected-style">
+
+<div
+class="selected-preview modern"
+id="selectedPreview">
+</div>
+
+<div class="selected-info">
+
+<strong id="selectedName">
+Anime moderno
+</strong>
+
+<small id="selectedDescription">
+Lineart limpio · sombreado suave
+</small>
+
+</div>
+
+</div>
+
+
+<h3 class="options-title">
+Ajustes rápidos
+</h3>
+
+
+<label class="option">
+
+<span>Preservar pose</span>
+
+<input type="checkbox" checked>
+
+<span class="switch"></span>
+
+</label>
+
+
+<label class="option">
+
+<span>Preservar rostro</span>
+
+<input type="checkbox" checked>
+
+<span class="switch"></span>
+
+</label>
+
+
+<label class="option">
+
+<span>Lineart definido</span>
+
+<input type="checkbox" checked>
+
+<span class="switch"></span>
+
+</label>
+
+
+<div style="
+margin-top:25px;
+padding:12px;
+background:#0c0f15;
+border:1px solid #292e3a;
+border-radius:10px;
+font-size:11px;
+color:#858b9b;
+line-height:1.5;
+">
+
+<strong style="color:#ddd">
+Flujo recomendado
+</strong>
+
+<br><br>
+
+1. Sube o dibuja el boceto.<br>
+2. Selecciona un estilo.<br>
+3. Describe la ilustración.<br>
+4. Pulsa convertir.
+
+</div>
+
+</aside>
+
+</div>
+
+
+<footer>
+Anime Sketch Studio · Frontend para GitHub Pages
+</footer>
+
+
+
+<script>
+
+/* =========================
+   CANVAS
+========================= */
+
+const canvas = document.getElementById("canvas");
+
+const ctx = canvas.getContext("2d");
+
+function resizeCanvas(){
+
+    const rect =
+    canvas.parentElement.getBoundingClientRect();
+
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+
+    ctx.fillStyle="#eeeeef";
+
+    ctx.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+}
+
+window.addEventListener("resize",resizeCanvas);
+
+resizeCanvas();
+
+
+let drawing=false;
+
+let lastX=0;
+let lastY=0;
+
+let mode="brush";
+
+
+function getPosition(e){
+
+    const rect =
+    canvas.getBoundingClientRect();
+
+    return {
+
+        x:e.clientX-rect.left,
+
+        y:e.clientY-rect.top
+
+    };
+
+}
+
+
+canvas.addEventListener(
+"pointerdown",
+e=>{
+
+    drawing=true;
+
+    const p=getPosition(e);
+
+    lastX=p.x;
+    lastY=p.y;
+
+});
+
+
+canvas.addEventListener(
+"pointermove",
+e=>{
+
+    if(!drawing) return;
+
+    const p=getPosition(e);
+
+    ctx.lineCap="round";
+
+    ctx.lineJoin="round";
+
+    ctx.lineWidth=
+    document.getElementById(
+        "brushSize"
+    ).value;
+
+    if(mode==="eraser"){
+
+        ctx.globalCompositeOperation=
+        "destination-out";
+
+    }else{
+
+        ctx.globalCompositeOperation=
+        "source-over";
+
+        ctx.strokeStyle="#191a20";
+
+    }
+
+    ctx.beginPath();
+
+    ctx.moveTo(lastX,lastY);
+
+    ctx.lineTo(p.x,p.y);
+
+    ctx.stroke();
+
+    lastX=p.x;
+    lastY=p.y;
+
+    document.getElementById(
+        "liveText"
+    ).textContent=
+    "actualizando vista previa…";
+
+});
+
+
+canvas.addEventListener(
+"pointerup",
+()=>{
+
+    drawing=false;
+
+    ctx.globalCompositeOperation=
+    "source-over";
+
+    document.getElementById(
+        "liveText"
+    ).textContent=
+    "listo para generar";
+
+});
+
+
+/* BRUSH */
+
+document.getElementById("brush").onclick=()=>{
+
+    mode="brush";
+
+    document
+    .getElementById("brush")
+    .classList.add("active");
+
+    document
+    .getElementById("eraser")
+    .classList.remove("active");
+
+};
+
+
+/* ERASER */
+
+document.getElementById("eraser").onclick=()=>{
+
+    mode="eraser";
+
+    document
+    .getElementById("eraser")
+    .classList.add("active");
+
+    document
+    .getElementById("brush")
+    .classList.remove("active");
+
+};
+
+
+/* =========================
+   IMAGE UPLOAD
+========================= */
+
+document
+.getElementById("imageInput")
+.addEventListener(
+"change",
+e=>{
+
+    const file=e.target.files[0];
+
+    if(!file)return;
+
+    const image=new Image();
+
+    image.onload=()=>{
+
+        ctx.clearRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+        ctx.fillStyle="#eeeeef";
+
+        ctx.fillRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+
+        const scale=Math.min(
+
+            canvas.width/image.width,
+
+            canvas.height/image.height
+
+        );
+
+
+        const w=image.width*scale;
+
+        const h=image.height*scale;
+
+
+        ctx.drawImage(
+
+            image,
+
+            (canvas.width-w)/2,
+
+            (canvas.height-h)/2,
+
+            w,
+
+            h
+
+        );
+
+    };
+
+    image.src=
+    URL.createObjectURL(file);
+
+});
+
+
+/* =========================
+   CLEAR
+========================= */
+
+document
+.getElementById("clear")
+.onclick=()=>{
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    ctx.fillStyle="#eeeeef";
+
+    ctx.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+};
+
+
+/* =========================
+   SLIDERS
+========================= */
+
+document
+.getElementById("strength")
+.oninput=e=>{
+
+    document
+    .getElementById("strengthValue")
+    .textContent=e.target.value+"%";
+
+};
+
+
+document
+.getElementById("detail")
+.oninput=e=>{
+
+    document
+    .getElementById("detailValue")
+    .textContent=e.target.value+"%";
+
+};
+
+
+/* =========================
+   TABS
+========================= */
+
+document
+.querySelectorAll(".tab")
+.forEach(tab=>{
+
+    tab.onclick=()=>{
+
+        document
+        .querySelectorAll(".tab")
+        .forEach(t=>
+            t.classList.remove("active")
+        );
+
+        document
+        .querySelectorAll(".panel")
+        .forEach(p=>
+            p.classList.remove("active")
+        );
+
+
+        tab.classList.add("active");
+
+        document
+        .getElementById(tab.dataset.panel)
+        .classList.add("active");
+
+    };
+
+});
+
+
+/* =========================
+   STYLES
+========================= */
+
+const styles=[
+
+{
+name:"Anime moderno",
+description:"Lineart limpio · sombreado suave",
+class:"modern"
+},
+
+{
+name:"Cel shading",
+description:"Sombras gráficas · colores vivos",
+class:"cel"
+},
+
+{
+name:"Manga",
+description:"Tinta definida · alto contraste",
+class:"manga"
+},
+
+{
+name:"Acuarela anime",
+description:"Textura pictórica · tonos suaves",
+class:"water"
+},
+
+{
+name:"Fantasy",
+description:"Épico · iluminación mágica",
+class:"fantasy"
+},
+
+{
+name:"Retro anime",
+description:"Paleta vintage · estética clásica",
+class:"retro"
+}
+
+];
+
+
+const grid=
+document.getElementById("stylesGrid");
+
+
+styles.forEach(
+(style,index)=>{
+
+    const element=
+    document.createElement("div");
+
+    element.className=
+    "style"+
+    (index===0?" selected":"");
+
+
+    element.innerHTML=`
+
+        <div class="
+            style-image
+            ${style.class}
+        ">
+            ✦
+        </div>
+
+        <div class="style-info">
+
+            <strong>
+                ${style.name}
+            </strong>
+
+            <small>
+                ${style.description}
+            </small>
+
+        </div>
+    `;
+
+
+    element.onclick=()=>{
+
+        document
+        .querySelectorAll(".style")
+        .forEach(x=>
+            x.classList.remove("selected")
+        );
+
+        element.classList.add("selected");
+
+
+        document
+        .getElementById("selectedName")
+        .textContent=
+        style.name;
+
+
+        document
+        .getElementById("selectedDescription")
+        .textContent=
+        style.description;
+
+
+        document
+        .getElementById("selectedPreview")
+        .className=
+        "selected-preview "+
+        style.class;
+
+    };
+
+
+    grid.appendChild(element);
+
+});
+
+
+/* =========================
+   GENERATE
+========================= */
+
+document
+.getElementById("generate")
+.onclick=()=>{
+
+    const image=
+    canvas.toDataURL("image/png");
+
+
+    /*
+       AQUÍ SE CONECTARÁ LA IA.
+
+       Ejemplo:
+
+       fetch("/api/generate",{
+           method:"POST",
+           headers:{
+              "Content-Type":
+              "application/json"
+           },
+           body:JSON.stringify({
+               image:image,
+               prompt:
+                 document
+                 .getElementById("prompt")
+                 .value
+           })
+       })
+    */
+
+
+    const result=
+    document.getElementById("resultImage");
+
+    result.src=image;
+
+    result.hidden=false;
+
+    document
+    .getElementById("placeholder")
+    .style.display="none";
+
+
+    /* Cambiar automáticamente
+       a la ventana Resultado */
+
+    document
+    .querySelectorAll(".tab")
+    .forEach(t=>
+        t.classList.remove("active")
+    );
+
+    document
+    .querySelectorAll(".panel")
+    .forEach(p=>
+        p.classList.remove("active")
+    );
+
+
+    document
+    .querySelector('[data-panel="result"]')
+    .classList.add("active");
+
+
+    document
+    .getElementById("result")
+    .classList.add("active");
+
+};
+
+</script>
+
+</body>
+  </html>
